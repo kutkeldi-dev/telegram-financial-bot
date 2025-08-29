@@ -43,17 +43,20 @@ async def status_text_handler(message: Message, current_user):
 @router.message(F.text == "💰 Расход")
 async def expense_text_handler(message: Message, current_user, state: FSMContext):
     """Обработчик текстовой команды Расход"""
-    from bot.handlers.expenses import start_expense_input
+    from bot.states.expense import ExpenseForm
+    from datetime import datetime
     
-    class FakeCallbackQuery:
-        def __init__(self, message):
-            self.message = message
-            self.data = "expense"
-        async def answer(self):
-            pass
+    await state.set_state(ExpenseForm.waiting_amount)
     
-    fake_callback = FakeCallbackQuery(message)
-    await start_expense_input(fake_callback, state, current_user)
+    text = (
+        f"💰 <b>Добавление расхода</b>\n\n"
+        f"👤 Пользователь: <b>{current_user.full_name}</b>\n"
+        f"📅 Дата: <b>{datetime.now().strftime('%d.%m.%Y')}</b>\n\n"
+        f"💵 Введите сумму расхода (в сомах):\n"
+        f"<i>Если расходов не было, введите 0</i>"
+    )
+    
+    await message.answer(text, parse_mode="HTML")
 
 @router.message(F.text == "📈 Аналитика")
 async def analytics_text_handler(message: Message, current_user):
