@@ -95,7 +95,7 @@ class AnalyticsService:
             plt.plot(daily_totals['date'], daily_totals['total_amount'], 
                     marker='o', linewidth=2, markersize=6, color='#4ECDC4')
             
-            plt.title(f'📈 Динамика расходов за последние {days} дней', fontsize=16, pad=20)
+            plt.title(f'Динамика расходов за последние {days} дней', fontsize=16, pad=20)
             plt.xlabel('Дата', fontsize=12)
             plt.ylabel('Сумма расходов (сом)', fontsize=12)
             
@@ -252,7 +252,7 @@ class AnalyticsService:
                    bottom=bottom, label=user, color=self.colors[i % len(self.colors)])
             bottom += pivot_table[user]
         
-        plt.title('📅 Недельная сводка расходов по дням и пользователям', 
+        plt.title('Недельная сводка расходов по дням и пользователям', 
                  fontsize=16, pad=20)
         plt.xlabel('Дата', fontsize=12)
         plt.ylabel('Сумма расходов (сом)', fontsize=12)
@@ -277,7 +277,7 @@ class AnalyticsService:
         plt.figure(figsize=(10, 6))
         plt.text(0.5, 0.5, message, ha='center', va='center', 
                 fontsize=16, transform=plt.gca().transAxes)
-        plt.title('📊 Аналитика расходов', fontsize=18, pad=20)
+        plt.title('Аналитика расходов', fontsize=18, pad=20)
         plt.axis('off')
         
         img_buffer = io.BytesIO()
@@ -359,7 +359,7 @@ class AnalyticsService:
         wedges, texts, autotexts = plt.pie(amounts, labels=categories, autopct='%1.1f%%', 
                                           colors=self.colors[:len(categories)], startangle=90)
         
-        plt.title(f'📊 Расходы по категориям за {days} дней', 
+        plt.title(f'Расходы по категориям за {days} дней', 
                  fontsize=16, pad=20)
         
         # Улучшаем читаемость
