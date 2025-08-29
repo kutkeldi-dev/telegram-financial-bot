@@ -66,17 +66,14 @@ async def expense_text_handler(message: Message, current_user):
 @router.message(F.text == "📈 Аналитика")
 async def analytics_text_handler(message: Message, current_user):
     """Обработчик текстовой команды Аналитика"""
-    from bot.handlers.analytics import show_analytics_menu
+    from bot.keyboards.inline import get_analytics_keyboard
+    from services.analytics import analytics_service
     
-    class FakeCallbackQuery:
-        def __init__(self, message):
-            self.message = message
-            self.data = "analytics"
-        async def answer(self):
-            pass
+    keyboard = get_analytics_keyboard()
+    summary = await analytics_service.get_analytics_summary()
+    text = f"{summary}\n\n🎯 Выберите тип аналитики:"
     
-    fake_callback = FakeCallbackQuery(message)
-    await show_analytics_menu(fake_callback, current_user)
+    await message.answer(text, parse_mode="HTML", reply_markup=keyboard)
 
 
 @router.message(F.text == "📖 Помощь")
