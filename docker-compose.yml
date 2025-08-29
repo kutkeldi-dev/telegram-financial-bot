@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  telegram-bot:
+    build: .
+    container_name: finance_telegram_bot
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - GOOGLE_SHEETS_ID=${GOOGLE_SHEETS_ID}
+      - TIMEZONE=Asia/Bishkek
+      - REMINDER_TIME=20:00
+      - AUTH_CODE_USER1=${AUTH_CODE_USER1}
+      - AUTH_CODE_USER2=${AUTH_CODE_USER2}
+      - AUTH_CODE_USER3=${AUTH_CODE_USER3}
+      - DATABASE_URL=sqlite+aiosqlite:///./data/bot.db
+      - DEBUG=False
+    depends_on:
+      - db
+    networks:
+      - bot-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: finance_bot_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: finance_bot
+      POSTGRES_USER: ${DB_USER:-botuser}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-securepassword123}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - bot-network
+    ports:
+      - "5432:5432"
+
+volumes:
+  postgres_data:
+
+networks:
+  bot-network:
+    driver: bridge
