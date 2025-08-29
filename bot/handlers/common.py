@@ -1,6 +1,7 @@
 from aiogram import Router, F
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
+from aiogram.fsm.context import FSMContext
 from bot.keyboards.inline import get_main_menu_keyboard, get_main_reply_keyboard
 
 router = Router()
@@ -40,18 +41,9 @@ async def status_text_handler(message: Message, current_user):
     await show_status_data(message, current_user)
 
 @router.message(F.text == "💰 Расход")
-async def expense_text_handler(message: Message, current_user):
+async def expense_text_handler(message: Message, current_user, state: FSMContext):
     """Обработчик текстовой команды Расход"""
     from bot.handlers.expenses import start_expense_input
-    from aiogram.fsm.context import FSMContext
-    from aiogram.fsm.storage.base import StorageKey
-    from bot.create_bot import dp
-    
-    # Получаем состояние пользователя
-    state = FSMContext(
-        storage=dp.storage,
-        key=StorageKey(bot_id=message.bot.id, chat_id=message.chat.id, user_id=message.from_user.id)
-    )
     
     class FakeCallbackQuery:
         def __init__(self, message):
