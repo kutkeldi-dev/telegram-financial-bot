@@ -48,9 +48,14 @@ class GoogleSheetsService:
             logger.info("Google Sheets connected successfully")
         except Exception as e:
             logger.error(f"Error connecting to Google Sheets: {e}")
+            self.client = None
+            self.sheet = None
     
     async def add_expense_to_sheet(self, user_name: str, amount: float, purpose: str, expense_date: datetime, category: str = None):
         """Добавление расхода в таблицу"""
+        if not self.client or not self.sheet:
+            logger.warning("Google Sheets not connected, skipping expense save")
+            return
         try:
             # Получаем или создаем лист "Расходы"
             try:
@@ -80,10 +85,12 @@ class GoogleSheetsService:
             
         except Exception as e:
             logger.error(f"Error adding expense to Google Sheets: {e}")
-            raise
     
     async def get_status_data(self) -> Dict[str, any]:
         """Получение данных для статуса из таблицы"""
+        if not self.client or not self.sheet:
+            logger.warning("Google Sheets not connected, returning empty status")
+            return {}
         try:
             # Получаем лист "Статус данные" 
             try:

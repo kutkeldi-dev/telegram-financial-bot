@@ -66,13 +66,16 @@ async def process_amount(message: Message, state: FSMContext, current_user):
                     )
                     
                     # Сохраняем в Google Sheets
-                    await google_sheets_service.add_expense_to_sheet(
-                        user_name=current_user.full_name,
-                        amount=0.0,
-                        purpose="Нет расходов",
-                        expense_date=expense.created_at,
-                        category=None
-                    )
+                    try:
+                        await google_sheets_service.add_expense_to_sheet(
+                            user_name=current_user.full_name,
+                            amount=0.0,
+                            purpose="Нет расходов",
+                            expense_date=expense.created_at,
+                            category=None
+                        )
+                    except Exception as e:
+                        logger.warning(f"Failed to save to Google Sheets: {e}")
                     
                     # Отмечаем напоминание как выполненное
                     from datetime import date
@@ -225,13 +228,16 @@ async def confirm_expense(callback: CallbackQuery, state: FSMContext, current_us
             )
             
             # Сохраняем в Google Sheets
-            await google_sheets_service.add_expense_to_sheet(
-                user_name=current_user.full_name,
-                amount=amount,
-                purpose=purpose,
-                expense_date=expense.created_at,
-                category=category
-            )
+            try:
+                await google_sheets_service.add_expense_to_sheet(
+                    user_name=current_user.full_name,
+                    amount=amount,
+                    purpose=purpose,
+                    expense_date=expense.created_at,
+                    category=category
+                )
+            except Exception as e:
+                logger.warning(f"Failed to save to Google Sheets: {e}")
             
             # Отмечаем напоминание как выполненное
             today = date.today()

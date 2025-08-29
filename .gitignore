@@ -1,10 +1,8 @@
 # Secrets and credentials
 .env
 data/credentials.json
-credentials_env.txt
-prepare_credentials.py
 
-# Database
+# Database  
 data/bot.db
 data/
 

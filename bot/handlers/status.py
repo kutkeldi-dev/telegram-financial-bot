@@ -76,11 +76,19 @@ async def show_status_data(message_or_callback, current_user):
         if hasattr(message_or_callback, 'answer') and hasattr(message_or_callback, 'message'):
             # Это CallbackQuery
             keyboard = get_main_menu_keyboard()
-            await message_or_callback.message.edit_text(
-                status_text,
-                parse_mode="HTML",
-                reply_markup=keyboard
-            )
+            try:
+                await message_or_callback.message.edit_text(
+                    status_text,
+                    parse_mode="HTML",
+                    reply_markup=keyboard
+                )
+            except Exception:
+                # Если не можем редактировать, отправляем новое сообщение
+                await message_or_callback.message.answer(
+                    status_text,
+                    parse_mode="HTML",
+                    reply_markup=keyboard
+                )
             await message_or_callback.answer()
         else:
             # Это Message
