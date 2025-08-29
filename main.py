@@ -37,6 +37,14 @@ async def main():
         bot, dp = create_bot()
         logger.info("Bot created")
         
+        # Выполняем начальную синхронизацию данных
+        try:
+            from services.google_sheets import google_sheets_service
+            await google_sheets_service.sync_expenses_from_sheets()
+            logger.info("Initial data sync completed")
+        except Exception as e:
+            logger.warning(f"Initial sync failed: {e}")
+        
         # Создаем и запускаем планировщик
         scheduler = SchedulerService(bot)
         scheduler.start()

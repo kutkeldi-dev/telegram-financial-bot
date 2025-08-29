@@ -67,6 +67,14 @@ async def auth_handler(message: Message):
             
             await message.answer(success_text, parse_mode="HTML", reply_markup=get_main_reply_keyboard())
             logger.info("User authorized successfully")
+            
+            # Выполняем синхронизацию данных для нового пользователя
+            try:
+                from services.google_sheets import google_sheets_service
+                await google_sheets_service.sync_expenses_from_sheets()
+                logger.info("Data synced for newly authorized user")
+            except Exception as sync_error:
+                logger.warning(f"Failed to sync data for new user: {sync_error}")
     
     except Exception as e:
         logger.error(f"Authorization error: {e}")

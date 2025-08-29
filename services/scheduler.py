@@ -45,6 +45,14 @@ class SchedulerService:
             name='Reset daily reminders'
         )
         
+        # Автоматическая синхронизация данных каждые 30 минут
+        self.scheduler.add_job(
+            self._auto_sync_data,
+            IntervalTrigger(minutes=30),
+            id='auto_sync',
+            name='Auto sync Google Sheets data'
+        )
+        
         self.scheduler.start()
         logger.info("Scheduler started")
     
@@ -89,6 +97,16 @@ class SchedulerService:
         """Сброс напоминаний в полночь"""
         logger.info("Resetting daily reminders")
         # Здесь можно добавить логику очистки старых напоминаний если нужно
+    
+    async def _auto_sync_data(self):
+        """Автоматическая синхронизация данных из Google Sheets"""
+        try:
+            logger.info("Starting automatic data sync")
+            from services.google_sheets import google_sheets_service
+            await google_sheets_service.sync_expenses_from_sheets()
+            logger.info("Automatic data sync completed successfully")
+        except Exception as e:
+            logger.error(f"Automatic data sync failed: {e}")
     
     def stop(self):
         """Остановка планировщика"""

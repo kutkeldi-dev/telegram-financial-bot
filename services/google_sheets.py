@@ -222,9 +222,6 @@ class GoogleSheetsService:
             for row in all_values[1:]:
                 if len(row) >= 6:
                     try:
-                        # Debug: логируем исходную строку
-                        logger.info(f"Processing row: {row}")
-                        
                         category_value = row[3] if len(row) > 3 and row[3] and row[3].strip() != "Не указана" else None
                         
                         expense_data = {
@@ -235,9 +232,6 @@ class GoogleSheetsService:
                             'purpose': row[4],
                             'created_at': datetime.strptime(row[5], "%d.%m.%Y %H:%M:%S")
                         }
-                        
-                        # Debug: логируем обработанные данные
-                        logger.info(f"Parsed expense: user={expense_data['user_name']}, amount={expense_data['amount']}, category={expense_data['category']}")
                         
                         sheet_expenses.append(expense_data)
                     except (ValueError, IndexError) as e:
@@ -264,16 +258,12 @@ class GoogleSheetsService:
                         # Get or create category
                         category_id = None
                         if expense_data['category']:
-                            logger.info(f"Looking for category: '{expense_data['category']}'")
                             result = await db.execute(select(ExpenseCategory).where(ExpenseCategory.name == expense_data['category']))
                             category = result.scalar_one_or_none()
                             if not category:
-                                logger.info(f"Creating new category: '{expense_data['category']}'")
                                 category = ExpenseCategory(name=expense_data['category'])
                                 db.add(category)
                                 await db.flush()
-                            else:
-                                logger.info(f"Found existing category: '{category.name}' with id {category.id}")
                             category_id = category.id
                         
                         # Create expense
