@@ -11,9 +11,9 @@ class Config:
     # Database URL - поддержка PostgreSQL для Railway
     DATABASE_URL = os.getenv("DATABASE_URL", "sqlite+aiosqlite:///./data/bot.db")
     
-    # Если Railway PostgreSQL, заменим на правильный драйвер
+    # Если Railway PostgreSQL, заменим на правильный драйвер для async
     if DATABASE_URL and DATABASE_URL.startswith("postgresql://"):
-        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+psycopg2://", 1)
+        DATABASE_URL = DATABASE_URL.replace("postgresql://", "postgresql+asyncpg://", 1)
     DEBUG = os.getenv("DEBUG", "False").lower() == "true"
     
     # Коды авторизации
