@@ -26,7 +26,12 @@ class AuthMiddleware(BaseMiddleware):
             user = await UserCRUD.get_user_by_telegram_id(db, event.from_user.id)
             
             if not user or not user.is_authorized:
-                await event.answer("❌ Вы не авторизованы. Используйте команду /auth [код]")
+                auth_message = "❌ Вы не авторизованы. Используйте команду /auth [код]"
+                
+                if isinstance(event, CallbackQuery):
+                    await event.answer(auth_message, show_alert=True)
+                else:  # Message
+                    await event.reply(auth_message)
                 return
             
             data['current_user'] = user
